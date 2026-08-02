@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>TaskManager.Api</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>$(NoWarn);CS1591;NU1605</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TaskManager.Application\TaskManager.Application.csproj" />
+    <ProjectReference Include="..\TaskManager.Infrastructure\TaskManager.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+    <PackageReference Include="WolverineFx" Version="6.24.4" />
+    <PackageReference Include="WolverineFx.Http" Version="6.24.4" />
+  </ItemGroup>
+
+  <Target Name="BuildAngular" BeforeTargets="BeforeBuild" Condition="'$(BuildAngular)' == 'true'">
+    <Exec Command="powershell -NoProfile -Command &quot;Push-Location 'C:\Users\julia\projects\taskmanager-web'; npm run build; Pop-Location&quot;" />
+  </Target>
+
+  <Target Name="CopyWwwroot" AfterTargets="Build">
+    <MakeDir Directories="wwwroot" Condition="!Exists('wwwroot')" />
+  </Target>
+
+</Project>

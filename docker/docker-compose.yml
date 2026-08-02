@@ -1,0 +1,16 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "8080:8080"
+    volumes:
+      - taskdata:/data
+      - ${WORKSPACE_DIR}:/workspace
+    environment:
+      ConnectionStrings__Sqlite: Data Source=/data/tasks.db
+      OPENCODE_BIN: opencode
+
+volumes:
+  taskdata: {}

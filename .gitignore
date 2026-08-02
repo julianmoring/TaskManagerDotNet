@@ -1,0 +1,35 @@
+## .NET / Visual Studio / Rider
+bin/
+obj/
+out/
+*.user
+*.suo
+*.userprefs
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+Desktop.ini
+*.tmp
+
+## Node / Angular (arrives in Phase 3)
+node_modules/
+dist/
+.angular/
+
+## wwwroot contents (Angular assets are produced into here in Phase 3)
+src/TaskManager.Api/wwwroot/*
+!src/TaskManager.Api/wwwroot/.gitkeep
+
+## Publish / artifacts
+publish/
+artifacts/
+*.nupkg
+*.snupkg
+
+## Local databases
+*.db
+*.db-shm
+*.db-wal

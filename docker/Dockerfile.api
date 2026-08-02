@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+COPY TaskManager.sln Directory.Build.props ./
+COPY src/TaskManager.Domain/TaskManager.Domain.csproj           src/TaskManager.Domain/
+COPY src/TaskManager.Application/TaskManager.Application.csproj src/TaskManager.Application/
+COPY src/TaskManager.Infrastructure/TaskManager.Infrastructure.csproj src/TaskManager.Infrastructure/
+COPY src/TaskManager.Api/TaskManager.Api.csproj                 src/TaskManager.Api/
+COPY src/TaskManager.Shared/TaskManager.Shared.csproj           src/TaskManager.Shared/
+COPY src/TaskManager.Maui/TaskManager.Maui.csproj               src/TaskManager.Maui/
+RUN dotnet restore TaskManager.sln
+
+COPY src/ src/
+
+RUN if [ -d /src/web ] ; then cd /src/web && npm ci && npm run build && cp -r dist/taskmanager-web/browser/* /src/src/TaskManager.Api/wwwroot/ ; fi
+
+RUN dotnet publish src/TaskManager.Api/TaskManager.Api.csproj -c Release -o /app/publish /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+RUN mkdir -p /data /workspace
+EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:8080
+ENV ConnectionStrings__Sqlite=Data Source=/data/tasks.db
+ENTRYPOINT ["dotnet", "TaskManager.Api.dll"]
