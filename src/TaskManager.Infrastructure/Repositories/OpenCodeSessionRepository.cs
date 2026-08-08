@@ -14,12 +14,16 @@ public sealed class OpenCodeSessionRepository : IOpenCodeSessionRepository
     public Task<OpenCodeSession?> GetByIdAsync(long id, CancellationToken ct = default) =>
         _db.OpenCodeSessions.FirstOrDefaultAsync(s => s.Id == id, ct);
 
-    public async Task<IReadOnlyList<OpenCodeSession>> ListByCardAsync(long cardId, CancellationToken ct = default) =>
-        await _db.OpenCodeSessions
+    public async Task<IReadOnlyList<OpenCodeSession>> ListByCardAsync(long cardId, CancellationToken ct = default)
+    {
+        var items = await _db.OpenCodeSessions
             .Where(s => s.CardId == cardId)
+            .ToListAsync(ct);
+        return items
             .OrderByDescending(s => s.CreatedAt)
             .ThenByDescending(s => s.Id)
-            .ToListAsync(ct);
+            .ToList();
+    }
 
     public void Add(OpenCodeSession session) => _db.OpenCodeSessions.Add(session);
 }

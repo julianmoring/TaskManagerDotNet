@@ -68,7 +68,7 @@ public sealed class OpenCodeSessionRepositoryTests : IDisposable
         Assert.Equal(startedAt, fetched.StartedAt);
     }
 
-    [Fact(Skip = "deviation: SQLite does not support DateTimeOffset in ORDER BY; production ListByCardAsync would need to sort client-side or use Id ordering.")]
+    [Fact]
     public async Task ListByCardAsync_returns_sessions_ordered_by_CreatedAt_descending()
     {
         var repo = new OpenCodeSessionRepository(_db.Context);
@@ -83,6 +83,6 @@ public sealed class OpenCodeSessionRepositoryTests : IDisposable
 
         var list = await repo.ListByCardAsync(_card.Id);
 
-        Assert.Equal(new[] { "c", "b", "a" }, list.Select(s => s.WorkspacePath).ToArray());
+        Assert.Equal(new[] { "c", "b", "a" }, list.Select(s => s.SpecBodySnapshot).ToArray());
     }
 }

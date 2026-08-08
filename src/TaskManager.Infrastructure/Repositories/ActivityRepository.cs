@@ -11,13 +11,17 @@ public sealed class ActivityRepository : IActivityRepository
 
     public ActivityRepository(TaskManagerDbContext db) => _db = db;
 
-    public async Task<IReadOnlyList<ActivityLog>> ListByBoardAsync(long boardId, DateTimeOffset? since, CancellationToken ct = default) =>
-        await _db.ActivityLogs
+    public async Task<IReadOnlyList<ActivityLog>> ListByBoardAsync(long boardId, DateTimeOffset? since, CancellationToken ct = default)
+    {
+        var items = await _db.ActivityLogs
             .Where(a => a.BoardId == boardId)
-            .Where(a => since == null || a.CreatedAt >= since)
+            .ToListAsync(ct);
+        var filtered = since.HasValue ? items.Where(a => a.CreatedAt >= since!.Value) : items;
+        return filtered
             .OrderBy(a => a.CreatedAt)
             .ThenBy(a => a.Id)
-            .ToListAsync(ct);
+            .ToList();
+    }
 
     public void Add(ActivityLog log) => _db.ActivityLogs.Add(log);
 }
