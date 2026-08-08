@@ -1,7 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using TaskManager.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<TaskManagerDbContext>(o => o.UseSqlite("Data Source=taskmanager.db"));
 
 var app = builder.Build();
 
