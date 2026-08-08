@@ -1,3 +1,4 @@
+using System.Text.Json;
 using TaskManager.Application.Abstractions;
 using TaskManager.Application.Commands.Sessions;
 using TaskManager.Application.Dtos;
@@ -9,6 +10,11 @@ namespace TaskManager.Api.Endpoints;
 
 public static class SessionsEndpoints
 {
+    private static readonly JsonSerializerOptions SseJsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
     [WolverinePost("/api/cards/{cardId}/sessions")]
     public static Task<StartSessionResponse> Start(
         long cardId,
@@ -62,10 +68,10 @@ public static class SessionsEndpoints
     {
         return Results.Stream(async stream =>
         {
-            await using var writer = new StreamWriter(stream);
+            await using var writer = new StreamWriter(stream, leaveOpen: true);
             await foreach (var evt in channel.SubscribeAsync(sessionId, cancellationToken))
             {
-                var json = System.Text.Json.JsonSerializer.Serialize(evt);
+                var json = System.Text.Json.JsonSerializer.Serialize(evt, SseJsonOptions);
                 await writer.WriteAsync($"data: {json}\n\n".AsMemory(), cancellationToken);
                 await writer.FlushAsync();
             }
