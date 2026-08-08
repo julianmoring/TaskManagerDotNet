@@ -11,12 +11,16 @@ public sealed class CommentRepository : ICommentRepository
 
     public CommentRepository(TaskManagerDbContext db) => _db = db;
 
-    public async Task<IReadOnlyList<Comment>> ListByCardAsync(long cardId, CancellationToken ct = default) =>
-        await _db.Comments
+    public async Task<IReadOnlyList<Comment>> ListByCardAsync(long cardId, CancellationToken ct = default)
+    {
+        var items = await _db.Comments
             .Where(c => c.CardId == cardId)
+            .ToListAsync(ct);
+        return items
             .OrderBy(c => c.CreatedAt)
             .ThenBy(c => c.Id)
-            .ToListAsync(ct);
+            .ToList();
+    }
 
     public void Add(Comment comment) => _db.Comments.Add(comment);
 

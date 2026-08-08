@@ -47,7 +47,7 @@ public sealed class CommentRepositoryTests : IDisposable
         Assert.Equal("First comment", stored.Body);
     }
 
-    [Fact(Skip = "deviation: SQLite does not support DateTimeOffset in ORDER BY; production ListByCardAsync would need to sort client-side or use Id ordering.")]
+    [Fact]
     public async Task ListByCardAsync_orders_by_CreatedAt()
     {
         var repo = new CommentRepository(_db.Context);

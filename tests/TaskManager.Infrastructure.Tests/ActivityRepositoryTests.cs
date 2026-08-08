@@ -39,7 +39,7 @@ public sealed class ActivityRepositoryTests : IDisposable
         Assert.Equal("Board was created", stored.Message);
     }
 
-    [Fact(Skip = "deviation: SQLite does not support DateTimeOffset in ORDER BY; production ListByBoardAsync would need to sort client-side or use Id ordering.")]
+    [Fact]
     public async Task ListByBoardAsync_filters_by_board()
     {
         var repo = new ActivityRepository(_db.Context);
@@ -53,7 +53,7 @@ public sealed class ActivityRepositoryTests : IDisposable
         Assert.Equal(_board.Id, list[0].BoardId);
     }
 
-    [Fact(Skip = "deviation: SQLite does not support DateTimeOffset in ORDER BY; production ListByBoardAsync would need to sort client-side or use Id ordering.")]
+    [Fact]
     public async Task ListByBoardAsync_respects_since_parameter()
     {
         var repo = new ActivityRepository(_db.Context);
